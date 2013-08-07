@@ -19,6 +19,7 @@ return array(
 	'basePath'=>$protectedPath,
 	'runtimePath' => $runtimePath,
 	'name'=>'My Poker',
+	'defaultController'=>'poker',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -35,7 +36,7 @@ return array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'guest',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			// 'ipFilters'=>array('127.0.0.1','::1'),
+			'ipFilters'=>array('*'),
 		),
 	),
 
@@ -94,6 +95,10 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'adminEmail'=>'webmaster@example.com',
+		'adminEmail'=>'fine14r3@gmail.com',
 	),
+
+	'sourceLanguage'=>'00',
+	'language'=>'jp',
+		
 );
