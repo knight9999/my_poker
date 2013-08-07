@@ -5,9 +5,34 @@ $this->breadcrumbs=array(
 	'Poker',
 );
 ?>
+<!-- 
 <h1><?php echo $this->id . '/' . $this->action->id; ?></h1>
-
-<p>
-	You may change the content of this page by modifying
-	the file <tt><?php echo __FILE__; ?></tt>.
+ -->
+ 
+<?php if ($engine->system->itemAt("actionResult") == false) : ?>
+<p style="color:red">
+	<?php echo $engine->system["resultText"]; ?>
 </p>
+<?php endif; ?>
+
+<?php if ($engine->currentView['template']) : ?>
+<?php echo $this->renderPartial($engine->currentView['template'], array('engine'=>$engine) ); ?>
+<?php else: ?>
+<?php   if (isset($engine->currentView["text"])): ?>
+<p><?php echo $engine->currentView["text"]; ?></p>
+<?php   endif; ?>
+
+<?php   if (isset($engine->currentView["buttons"])): ?>
+<?php   foreach ( $engine->currentView["buttons"] as $button ): ?>
+<a href="<?php echo $this->createUrl($this->id . "/index",array( "answer" => $button[1] , "counter" => $engine->checkCode ) )?>">
+<?php   echo $button[0]; ?>
+</a>
+<?php   endforeach; ?>
+<?php   endif; ?>
+<br>
+<?php endif; ?>
+
+
+<br>
+<br>
+
