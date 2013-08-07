@@ -43,10 +43,11 @@ body
 
 #logo
 {
-	padding: 10px 20px;
+	padding: 10px 20px 0px 20px;
 	font-size: 200%;
 }
 
+/*
 #mainmenu
 {
 	background:white url(bg.gif) repeat-x left top;
@@ -79,6 +80,88 @@ body
 	background-color:#EFF4FA;
 	text-decoration:none;
 }
+*/
+
+#menu {
+	width:530px;
+	padding:0;
+	margin:0;
+	list-style-type: none;
+}
+
+#menu li {
+	width:20%;
+	float:left;
+	padding:0;
+	margin:0px 5px 0px 5px;
+	text-align:center;
+}
+
+#menu li a {
+	width:auto;
+	color:#fff;
+	font-size:12px;
+	font-weight:bold;
+	padding:10px 0;
+	text-deortaion:none;
+	display:block;
+	border-radius: 10px;
+	background:#6C6;
+	background-image: -moz-linear-gradient(top,#8C8 0%,#7B7 50%, #6A6 50%, #7C7 100%);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0,#8C8), color-stop(0.50,#7B7),color-stop(0.50,#6A6),color-stop(1,#7C7));
+	background: -ms-linear-gradient(top, #8C8, #7B7 50%, #6A6 50%, #7C7 100%);
+	background: linear-gradient(to bottom , #8C8, #7B7 50%, #6A6 50%, #7C7 100%); /* IE10 */
+}
+#menu li a:hover {
+	margin: 0px;
+	background:#555;
+}
+
+#gamearea {
+	background: #efefff;
+}
+
+#gamearea > #gamemain {
+	background: #ffefef;
+	width: 620px;
+	float:left;
+}
+
+#gamearea > #gamecontrol {
+	background: #efffef;
+	float:left;
+	width: 260px;
+	height: 200px;
+	position: relative;
+}
+
+#gamedata {
+	font-size: 1.2em;
+}
+
+#gamemessage {
+	font-size: 1.2em;
+}
+
+#gameinput {
+	position:absolute;
+	bottom:0;
+	font-size: 2em;
+}
+
+#gameinput input {
+	font-size: 1.2em;
+}
+
+#gameinput_inner {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.wspc1 {
+	margin-left: 10px;
+}
+
 
 div.flash-error, div.flash-notice, div.flash-success
 {
