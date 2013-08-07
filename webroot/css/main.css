@@ -122,9 +122,11 @@ body
 }
 
 #gamearea > #gamemain {
-	background: #ffefef;
+	background: #efefff;
 	width: 620px;
 	float:left;
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 
 #gamearea > #gamecontrol {
@@ -133,6 +135,10 @@ body
 	width: 260px;
 	height: 200px;
 	position: relative;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 #gamedata {

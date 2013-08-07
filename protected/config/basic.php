@@ -1,3 +1,3 @@
 <?php 
-define('PATH_YII' , '/var/yii/framework/yii.php');
+define('YII_FRAMEWORK' , '/var/yii/framework');
 ?>

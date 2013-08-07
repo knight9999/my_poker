@@ -92,7 +92,7 @@ class MainOperation extends BaseGameOperation {
 				
 			$this->showView();
 			$this->currentView["buttons"] = array(
-					array( '場代（コイン一枚）を払う' , "rake" )
+					array( '場代を払う' , "rake" )
 			);
 			$this->setNextProcess( "rake");
 			return;

@@ -2,8 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<meta name="description" content="テストサイト" />
-<meta name="keywords" content="テスト,サイト" />
+<meta name="description" content="DrawPoker" />
+<meta name="keywords" content="DrawPoker,php,yii" />
 <link rel="stylesheet" type="text/css" href="./index.css" />
 	<!-- blueprint CSS framework -->
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/screen.css" media="screen, projection" />
@@ -30,11 +30,10 @@
 		<?php $this->widget('zii.widgets.CMenu',array(
 			'id'=>"menu",
 			'items'=>array(
-				array('label'=>'Home', 'url'=>array('/site/index')),
-				array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
-				array('label'=>'Contact', 'url'=>array('/site/contact')),
-				array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
-				array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
+				array('label'=>'Home', 'url'=>array('/poker/index')),
+				array('label'=>'Play', 'url'=>array('/poker/menu')),
+				array('label'=>'HowTo', 'url'=>array('/poker/howto')),
+				array('label'=>'Settings', 'url'=>array('/poker/settings')),
 			),
 		)); ?>
 	</div><!-- mainmenu -->

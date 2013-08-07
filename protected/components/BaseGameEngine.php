@@ -1,7 +1,7 @@
 <?php 
 
 class BaseGameEngine extends CComponent {
-	public $data;
+	public $_data;
 	public $check_code_key = "check_code";
 	
 	public $loaddata;
@@ -9,6 +9,17 @@ class BaseGameEngine extends CComponent {
 
 	public function input($key) {
 		
+	}
+	
+	public function getData() {
+		if (! isset($this->_data)) {
+			$this->initData();
+		}
+		return $this->_data;
+	}
+	
+	public function setData($value) {
+		$this->_data = $value;
 	}
 	
 	public function initData() {

@@ -4,29 +4,39 @@ class PokerController extends Controller
 {
 	public function actionIndex()
 	{
+		$this->render('index' );
+	}
+
+	public function actionPlay()
+	{
 		$engine = $this->engine();
 		try {
 			$engine->run();
-			$this->render('index' , array( 'engine' => $engine ) );
+			$this->render('play' , array( 'engine' => $engine ) );
 		} catch (GameException $e) {
 			$this->redirectError( $e->message );
 		}
 	}
-
+	
 	public function actionMenu() {
 		$engine = $this->engine();
 		$res = $engine->onLoadData();
+		$engine->clearCheckCode();
 		if ( $res ) {
 			if ($engine->mode != "menu" && $engine->currentView) {
 				$engine->pushStack();
 				$engine->mode = "menu";
 				$engine->setCurrentView(null);
-				$engine->setNextProcess( "PokerMenu/formPlay" );
-				$engine->checkCode = null;
-				$this->redirect( array( $this->id . '/index'));
+				$engine->setNextProcess( "Menu/formPlay" );
+				$engine->onSaveData();
+				$this->redirect( array( $this->id . '/play'));
 				return;
 			} else if ($engine->mode == "menu") {
-				$this->redirect( array( $this->id . '/index'));
+				$engine->setCurrentView(null);
+				$engine->setNextProcess( "Menu/formPlay" );
+				$engine->onSaveData();
+				$this->redirect( array( $this->id . '/play'));
+				return;
 			}
 		}
 		$this->redirect( array( $this->id . '/init'));
@@ -38,7 +48,7 @@ class PokerController extends Controller
 		$engine->mode = "main";
 		$engine->onSaveData();
 	
-		$this->redirect( array( $this->id . '/index'));
+		$this->redirect( array( $this->id . '/play'));
 	}
 	
 	public function actionError()

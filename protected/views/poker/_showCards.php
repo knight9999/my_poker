@@ -3,7 +3,7 @@
 	$cs->registerCoreScript('jquery');
 	$script = <<<'EOL'
 $(function(){
-	var $h = $('#gamemain').height();
+	var $h = $('#gamemain').height() ;
 	$('#gamecontrol').height( $h ); 
 	$('#gameinput').height( $h / 2 ); 
 	$('#gameinput_inner').height( $h / 2 ); 
@@ -141,7 +141,7 @@ Round <?php echo $engine->main["charman"]->round ?>
 <div id="gameinput"><!--  begin input  -->
 <div id="gameinput_inner">
 <?php if (isset($engine->currentView["form"])): ?>
-<?php echo CHtml::beginForm( $this->createUrl($this->id . "/index") , 'GET' , 
+<?php echo CHtml::beginForm( $this->createUrl($this->id . "/play") , 'GET' , 
 			isset($engine->currentView["select_card"]) ? array( 'name'=>'command', 'onSubmit' => "return check();"   ) : null ); ?> 
 <input type="hidden" name="counter" value="<?php echo $engine->checkCode; ?>">
 <?php   if (isset($engine->currentView['select_card'])): ?>
@@ -160,14 +160,14 @@ Round <?php echo $engine->main["charman"]->round ?>
 <?php if (isset($engine->currentView["buttons"])): ?>
 <?php foreach ( $engine->currentView["buttons"] as $button ): ?>
 <p>
-<a href="<?php echo $this->createUrl($this->id . "/index",array( "answer" => $button[1] , "counter" => $engine->checkCode ) )?>">
+<a href="<?php echo $this->createUrl($this->id . "/play",array( "answer" => $button[1] , "counter" => $engine->checkCode ) )?>">
 <?php echo $button[0]; ?>
 </a>
 </p>
 <?php endforeach; ?>
 <?php endif; ?>
 <?php if ( (! isset($engine->currentView["buttons"])) && (! isset($engine->currentView["form"])) ): ?>
-<a href="<?php echo $this->createUrl($this->id."/index",array( "answer" => "OK" , "counter" => $engine->checkCode ) )?>">
+<a href="<?php echo $this->createUrl($this->id."/play",array( "answer" => "OK" , "counter" => $engine->checkCode ) )?>">
 OK
 </a>
 <?php endif; ?>
