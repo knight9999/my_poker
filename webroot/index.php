@@ -1,7 +1,9 @@
 <?php
 
 // change the following paths if necessary
-$yii='/var/yii/framework/yii.php';
+// $yii='/var/yii/framework/yii.php';
+require_once(dirname(__FILE__).'/../protected/config/basic.php');
+$yii=PATH_YII;
 $config=dirname(__FILE__).'/../protected/config/main.php';
 
 // remove the following lines when in production mode
