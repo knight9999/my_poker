@@ -123,7 +123,7 @@ COMのコイン
 <div id="gamedata"><!--  begin data -->
 <p>
 <span>
-Round <?php echo $engine->main["charman"]->round ?>
+Round <?php echo $engine->main["charman"]->round ?> / 4
 </span>
 <span class="wspc1">
 残りカード数 <?php echo $engine->main['charman']->deck->count ?>枚 

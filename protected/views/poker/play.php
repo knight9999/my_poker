@@ -1,13 +1,3 @@
-<?php
-/* @var $this PokerController */
-
-$this->breadcrumbs=array(
-	'Poker',
-);
-?>
-<!-- 
-<h1><?php echo $this->id . '/' . $this->action->id; ?></h1>
- -->
  
 <?php if ($engine->system->itemAt("actionResult") == false) : ?>
 <p style="color:red">

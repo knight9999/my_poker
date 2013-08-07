@@ -18,6 +18,14 @@ class PokerController extends Controller
 		}
 	}
 	
+	public function actionHowto() {
+		$this->render('howto');
+	}
+	
+	public function actionSettings() {
+		$this->render('settings');
+	}
+	
 	public function actionMenu() {
 		$engine = $this->engine();
 		$res = $engine->onLoadData();
