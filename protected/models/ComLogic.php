@@ -154,6 +154,18 @@ class ComLogic extends CComponent {
 		return $r;
 	}
 	
+	public function changeCardsByRandom() {
+		$n = rand(0,5); // 何枚交換するか
+		$r = array();
+		for ($i=0;$i<$n;$i++) {
+			$num = rand(0,4);
+			if (!in_array( $num , $r) ) {
+				array_push( $r , $num );
+			}
+		}
+		return $r;
+	}
+	
 }
 
 

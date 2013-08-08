@@ -51,11 +51,122 @@ class PokerHand extends CComponent {
 		return $this->name;
 	}
 	
+	public function analyse($checkType = "combination",$report = null) {
+		if (!isset($report)) {
+			$report = new CMap();
+		}
+		switch ($checkType) {
+			case "basic":
+				$report["marks"] = new CMap();
+				$report["numbers"] = new CMap();
+				for ($i=1;$i<=4;$i++) {
+					$report["marks"][$i] = 0;
+				}
+				for ($i=1;$i<=13;$i++) {
+					$report["numbers"][$i] = 0;
+				}
+				foreach ($this->cards as $card) {
+					$report["marks"][$card->mark] += 1;
+					$report["numbers"][$card->number] += 1;
+				}
+				$report["checked"] = new CMap();
+				$report["checked"]["basic"] = true;
+				$report["flags"] = new CMap();
+				break;
+				
+			case "marks":
+				if (! $report["checked"]["basic"]) {
+					$this->analyse("basic",$report);
+				}
+				for ($i=1;$i<=4;$i++) {
+					if ($report["marks"][$i] == 5) {
+						$report["flags"]["flash"] = true;
+					}
+				}
+				$report["checked"]["marks"] = true;
+				break;
+				
+			case "numbers":
+				if (! $report["checked"]["basic"]) {
+					$this->analyse("basic",$report);
+				}
+				$numbers = $report["numbers"];
+				$marks   = $report["marks"];
+				
+				$last = 0;
+				$count = 0;
+				for ($i=1;$i<=13;$i++) {
+					if ($numbers[$i]>=1) {
+						if ($last == $i - 1 && $count>0 ) {
+							$count += 1;
+							if ($count>=5) {
+								$report["flags"]["straight"] = true;
+//								$flag_straight = true;
+							}
+						} else {
+							$count = 1;
+						}
+						$last = $i;
+					} else {
+						$count = 0;
+					}
+				
+					if ($numbers[$i] == 4) {
+						$report["flags"]["fourcard"] = true;
+//						$flag_fourcard = true;
+					}
+					if ($numbers[$i] == 3) {
+						$report["flags"]["threecard"] = true;
+//						$flag_threecard = true;
+					}
+					if ($numbers[$i] == 2) {
+						if ($report["flags"]["one_pair"]) {
+							$report["flags"]["two_pairs"] = true;
+//							$flag_two_pair = true;
+						} else {
+							$report["flags"]["one_pair"] = true;
+//							$flag_one_pair = true;
+						}
+					}
+				}
+				if ($last = 13 && $count == 4 && $numbers[1] >= 1) {
+					$report["flags"]["royal_straight"] = true;
+//					$flag_royal_straight = true;
+				}
+				$report["last"] = $last;
+				$report["numbers"] = $numbers; 
+				$report["marks"] = $marks;
+				
+				$report["checked"]["numbers"] = true;
+				break;
+			case "combination":
+				if (! $report["checked"]["marks"]) {
+					$this->analyse("marks",$report);
+				}
+				if (! $report["checked"]["numbers"]) {
+					$this->analyse("numbers",$report);
+				}
+				if ($report["flags"]["one_pair"] && $report["flags"]["threecard"]) {
+					$report["flags"]["fullhouse"] = true;
+				}
+				if ($report["flags"]["flash"] && $report["flags"]["straight"]) {
+					$report["flags"]["straight_flash"] = true;
+				}
+				if ($report["flags"]["flash"] && $report["flags"]["royal_straight"]) {
+					$report["flags"]["royal_straight_flash"] = true;
+				}
+				$report["checked"]["combination"] = true;
+				break;
+		}
+		return $report;
+	}
+	
 	public function calc() {
 		
+		/*
 		$marks = new CMap();
 		$numbers = new CMap();
-		for ($i=0;$i<4;$i++) {
+		for ($i=1;$i<=4;$i++) {
 			$marks[$i] = 0;
 		}
 		for ($i=1;$i<=13;$i++) {
@@ -66,18 +177,18 @@ class PokerHand extends CComponent {
 			$numbers[$card->number] += 1;
 		}
 
-		$flag_royal_strait_flash = false; 
-		$flag_strait_flash = false;
+		$flag_royal_straight_flash = false; 
+		$flag_straight_flash = false;
 		$flag_fourcard = false;
 		$flag_fullhouse = false;
 		$flag_flash = false;
-		$flag_royal_strait = false;
-		$flag_strait = false;
+		$flag_royal_straight = false;
+		$flag_straight = false;
 		$flag_threecard = false;
 		$flag_two_pair = false;
 		$flag_one_pair = false;
 		
-		for ($i=0;$i<4;$i++) {
+		for ($i=1;$i<=4;$i++) {
 			if ($marks[$i] == 5) {
 				$flag_flash = true;
 			}
@@ -90,7 +201,7 @@ class PokerHand extends CComponent {
 				if ($last == $i - 1 && $count>0 ) {
 					$count += 1;
 					if ($count>=5) {
-						$flag_strait = true;
+						$flag_straight = true;
 					}
 				} else {
 					$count = 1;
@@ -115,32 +226,37 @@ class PokerHand extends CComponent {
 			}
 		}
 		if ($last = 13 && $count == 4 && $numbers[1] >= 1) {
-			$flag_royal_strait = false;
+			$flag_royal_straight = true;
 		}
+		
 		if ($flag_one_pair && $flag_threecard) {
 			$flag_fullhouse = true;
 		}
-		if ($flag_flash && $flag_strait) {
-			$flag_strait_flash = true;
+		if ($flag_flash && $flag_straight) {
+			$flag_straight_flash = true;
 		}
-		if ($flag_flash && $flag_royal_strait) {
-			$flag_royal_strait_flash = true;
+		if ($flag_flash && $flag_royal_straight) {
+			$flag_royal_straight_flash = true;
 		}
-		
-		if ($flag_royal_strait_flash) {
+		*/
+
+		$report = $this->analyse();
+		$numbers = $report["numbers"];
+			
+		if ($report["flags"]["royal_straight_flash"]) {
 			$this->level = 10;
 			$this->name = "ロイヤルストレートフラッシュ";
 			$this->supplement = array(
 				'mark' => $this->cards[0]->mark
 			);
-		} elseif ($flag_strait_flash) {
+		} elseif ($report["flags"]["straight_flash"]) {
 			$this->level = 9;
 			$this->name = "ストレートフラッシュ";
 			$this->supplement = array( 
 				'mark' => $this->cards[0]->mark,
-				'number' => $last
+				'number' => $report["last"]
 			);
-		} elseif ($flag_fourcard) {
+		} elseif ($report["flags"]["fourcard"]) {
 			$this->level = 8;
 			$this->name = "フォーカード";
 			$fourcard_number = 0;
@@ -152,7 +268,7 @@ class PokerHand extends CComponent {
 			$this->supplement = array(
 				'number' => $fourcard_number
 			);
-		} elseif ($flag_fullhouse) {
+		} elseif ($report["flags"]["fullhouse"]) {
 			$this->level = 7;
 			$this->name = "フルハウス";
 			$threecard_number = 0;
@@ -164,7 +280,7 @@ class PokerHand extends CComponent {
 			$this->supplement = array(
 					'number' => $threecard_number
 			);
-		} elseif ($flag_flash) { 
+		} elseif ($report["flags"]["flash"]) { 
 			$this->level = 6;
 			$this->name = "フラッシュ";
 			$list = array();
@@ -180,17 +296,17 @@ class PokerHand extends CComponent {
 			$this->supplement = array(
 					'numbers' => $list
 			);
-		} elseif ($flag_royal_strait) {
+		} elseif ($report["flags"]["royal_straight"]) {
 			$this->level = 5;
 			$this->name = "ストレート";
 			$this->supplement = array();
-		} elseif ($flag_strait) {
+		} elseif ($report["flags"]["straight"]) {
 			$this->level = 4;
 			$this->name = "ストレート";
 			$this->supplement = array(
-				'number' => $last
+				'number' => $report["last"]
 			);
-		} elseif ($flag_threecard) {
+		} elseif ($report["flags"]["threecard"]) {
 			$this->level = 3;
 			$this->name = "スリーカード";
 			$threecard_number = 0;
@@ -202,7 +318,7 @@ class PokerHand extends CComponent {
 			$this->supplement = array(
 					'number' => $threecard_number
 			);
-		} elseif ($flag_two_pair) {
+		} elseif ($report["flags"]["two_pairs"]) {
 			$this->level = 2;
 			$this->name = "ツーペア";
 			$pair_numbers = array();
@@ -222,7 +338,7 @@ class PokerHand extends CComponent {
 				'pair_numbers' => $pair_numbers,
 				'other_number' => $other_number	
 			);
-		} elseif ($flag_one_pair) {
+		} elseif ($report["flags"]["one_pair"]) {
 			$this->level = 1;
 			$this->name = "ワンペア";
 			$pair_number = null;
