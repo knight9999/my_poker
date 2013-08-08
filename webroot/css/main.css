@@ -47,50 +47,15 @@ body
 	font-size: 200%;
 }
 
-/*
-#mainmenu
-{
-	background:white url(bg.gif) repeat-x left top;
-}
-
-#mainmenu ul
-{
-	padding:6px 20px 5px 20px;
-	margin:0px;
-}
-
-#mainmenu ul li
-{
-	display: inline;
-}
-
-#mainmenu ul li a
-{
-	color:#ffffff;
-	background-color:transparent;
-	font-size:12px;
-	font-weight:bold;
-	text-decoration:none;
-	padding:5px 8px;
-}
-
-#mainmenu ul li a:hover, #mainmenu ul li.active a
-{
-	color: #6399cd;
-	background-color:#EFF4FA;
-	text-decoration:none;
-}
-*/
-
 #menu {
-	width:530px;
+	width:730px;
 	padding:0;
 	margin:0;
 	list-style-type: none;
 }
 
 #menu li {
-	width:20%;
+	width:15%;
 	float:left;
 	padding:0;
 	margin:0px 5px 0px 5px;
@@ -315,4 +280,35 @@ div.search-form
 .operations li a:hover
 {
 	background: #80CFFF;
+}
+
+
+
+.form
+{
+}
+
+.form ul,li
+{
+    border:0;
+   	margin:0;
+    padding:0;
+    list-style:none;
+}
+
+.form li
+{
+    clear:both;
+    list-style:none;
+    padding:4px 0;
+}
+
+
+.form ul li > label
+{
+    width:140px;
+    float:left;
+}
+	
+	
 }

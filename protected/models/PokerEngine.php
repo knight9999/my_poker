@@ -68,11 +68,12 @@ class PokerEngine extends BaseGameEngine {
 	// ユーティリティメソッド
 	//
 	
-	public function showView() {
+	public function showView($flagCardOpen = false) {
 		$view = new CMap( array(
 				'message' => 'ポーカーゲーム',
 				'template' => '_showCards',
 				'text' => '',
+				'flagCardOpen' => $flagCardOpen,
 				'charman' => $this->main["charman"]
 		));
 		$this->setCurrentView(  $view );

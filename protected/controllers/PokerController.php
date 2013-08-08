@@ -18,14 +18,6 @@ class PokerController extends Controller
 		}
 	}
 	
-	public function actionHowto() {
-		$this->render('howto');
-	}
-	
-	public function actionSettings() {
-		$this->render('settings');
-	}
-	
 	public function actionMenu() {
 		$engine = $this->engine();
 		$res = $engine->onLoadData();
@@ -72,6 +64,40 @@ class PokerController extends Controller
 
 	public function actionErr() {
 		$this->render('err');
+	}
+	
+	public function actionHowto() {
+		$this->render('howto');
+	}
+	
+	public function actionSettings() {
+		$request = Yii::app()->request;
+		$resp = array();
+		
+		$settings = Yii::app()->settings;
+		$settings->load();
+		if ($request->getParam("submit")) {
+			$settings->data["openCard"] = $request->getParam("openCard");
+			$settings->data["dealer"]	= $request->getParam("dealer");
+			$settings->save();
+			$resp["message"] = "設定しました";
+		} elseif ($request->getParam("reset")) {
+			$settings->reset();
+			$settings->save();
+		} elseif ($request->getParam("cleardata") == 1) {
+			$engine = $this->engine();
+			$engine->clearDataAll();
+			$engine->onSaveData( new CEvent($this) );
+			$resp["message"] = "データを削除しました";
+		}
+		$resp["settings"] = $settings;
+		
+		
+		$this->render('settings' , $resp );
+	}
+	
+	public function actionTechNote() {
+		$this->render('tech_note');
 	}
 	
 	public function actionClearData() {

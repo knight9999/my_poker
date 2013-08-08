@@ -2,7 +2,7 @@
 	$cs = Yii::app()->clientScript;
 	$cs->registerCoreScript('jquery');
 	$script = <<<'EOL'
-$(function(){
+$(window).load(function(){
 	var $h = $('#gamemain').height() ;
 	$('#gamecontrol').height( $h ); 
 	$('#gameinput').height( $h / 2 ); 
@@ -33,7 +33,14 @@ JS;
 	$cs->registerScript('check_cards',$script,CClientScript::POS_HEAD);
 ?>
 <?php endif; ?>
-
+<?php 
+ $fo = $engine->currentView['flagCardOpen'];
+ $settings = Yii::app()->settings;
+ $settings->load();
+ if ($settings->data["openCard"]) {
+	$fo = true;
+ }
+?>
 <div id="gamearea">
 
 <div id="gamemain">
@@ -65,12 +72,12 @@ COMのコイン
 <div style="float:left; width:120px;" >
 <?php if (isset($engine->currentView['com_select_card'])): ?>
 <?php   if (!in_array( $i , $engine->currentView['com_select_card']) ): ?>
-<p style="text-align:center;" ><img src="<?php echo $card->image() ?>"></p>
+<p style="text-align:center;" ><img src="<?php echo $fo ? $card->image() : $card->bg_image(); ?>"></p>
 <?php   else: ?>
 <p style="text-align:center;">&nbsp;</p>
 <?php   endif; ?>
 <?php else: ?>
-<p style="text-align:center;" ><img src="<?php echo $card->image() ?>"></p>
+<p style="text-align:center;" ><img src="<?php echo $fo ? $card->image() : $card->bg_image(); ?>"></p>
 <?php endif; ?>
 </div>
 <?php $i += 1; ?>

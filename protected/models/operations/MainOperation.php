@@ -33,6 +33,11 @@ class MainOperation extends BaseGameOperation {
 		array_push( $charman->players , $person_player );
 	
 		$charman->dealerId = 0; // とりあえず、0:COM 1:YOU でどちらも可能。
+		$settings = Yii::app()->settings;
+		$settings->load();
+		if ($settings->data["dealer"] == 2) {
+			$charman->dealerId = 1;
+		}	
 		$charman->currentPlayerId = 1; // dealerの次の人から始めるので、これでよい。
 	
 		$this->main["charman"] = $charman;
@@ -153,7 +158,7 @@ class MainOperation extends BaseGameOperation {
 			$message .= "引き分けです。コインはディーラーに没収になります。";
 		}
 		$this->main['winnerId'] = $charman->winnerId;
-		$this->showView();
+		$this->showView(true);
 		$this->currentView['text'] = $message;
 		$this->setNextProcess("clearUp");
 	}
@@ -170,7 +175,7 @@ class MainOperation extends BaseGameOperation {
 		foreach ($charman->players as $player) {
 			$coinTrans[ $charman->playerIdFor( $player ) ]['after'] = $player->coins;
 		}
-		$this->showView();
+		$this->showView(true);
 		unset( $this->main['winnerId'] );
 		$text = "清算しました\n\n";
 		foreach ($charman->players as $player) {
@@ -259,8 +264,8 @@ class MainOperation extends BaseGameOperation {
 		}
 	}
 	
-	public function showView() {
-		$this->engine->showView();
+	public function showView($flagCardOpen = false) {
+		$this->engine->showView($flagCardOpen);
 	}
 	
 	

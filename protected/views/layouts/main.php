@@ -4,7 +4,6 @@
 <meta charset="utf-8" />
 <meta name="description" content="DrawPoker" />
 <meta name="keywords" content="DrawPoker,php,yii" />
-<link rel="stylesheet" type="text/css" href="./index.css" />
 	<!-- blueprint CSS framework -->
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/screen.css" media="screen, projection" />
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
@@ -13,7 +12,6 @@
 	<![endif]-->
 
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css" />
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/standard.css" />
 	
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
@@ -34,6 +32,7 @@
 				array('label'=>'Play', 'url'=>array('/poker/menu')),
 				array('label'=>'HowTo', 'url'=>array('/poker/howto')),
 				array('label'=>'Settings', 'url'=>array('/poker/settings')),
+				array('label'=>'Technical Note', 'url'=>array('/poker/techNote') ),
 			),
 		)); ?>
 	</div><!-- mainmenu -->

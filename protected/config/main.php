@@ -43,6 +43,9 @@ return array(
 
 	// application components
 	'components'=>array(
+		'settings' => array(
+			'class'=>'application.components.Settings'
+		),
 //		'user'=>array(
 //			// enable cookie-based authentication
 //			'allowAutoLogin'=>true,
