@@ -13,7 +13,7 @@ function _joinpath($dir1, $dir2) {
 $homePath      = dirname(__FILE__) . '/../..';
 $protectedPath = _joinpath($homePath, 'protected');
 $webrootPath   = _joinpath($homePath, 'webroot');
-$runtimePath   = _joinpath($homePath, 'runtime');
+$runtimePath   = _joinpath($protectedPath, 'runtime');
 
 return array(
 	'basePath'=>$protectedPath,
