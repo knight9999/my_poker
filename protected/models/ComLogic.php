@@ -10,35 +10,38 @@ class ComLogic extends CComponent {
 	}
 	
 	public function decidePlan1() {
-		$r = rand(1,4);
-		$p = 3; // フォールド
-		switch ($r) {
-			case 1:
-			case 2:
-			case 3:
-				$p=1; // ベット
-				break;
-			default :
+		$cards = $this->player->cards;
+		$hand = new PokerHand($cards);
+		$level = $hand->level();
 		
-		}
+		$fault_value = array( 90 , 10 , 3 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 );
+		
+		$r = GRand::rand(1,100);
+		if ($fault_value[$level] > $r ) { 
+			$p = 3; // フォールト
+		} else {
+			$p = 1; // ベット
+		} 
+
 		return $p;
 	}
 	
 	public function decidePlan2() {
-		$r = rand(1,4);
-		$p = 3; // フォールド
-		switch ($r) {
-			case 1:
-			case 2:
-				$p=1; // コール
-			 	break;
-			case 3:
-				$p=2; // レイズ
-				break;
-			default :
-				
+		$cards = $this->player->cards;
+		$hand = new PokerHand($cards);
+		$level = $hand->level();
+		$fault_value = array( 40 , 5  , 1  , 0  , 0  , 0  , 0  , 0  , 0  , 0  ,   0 );
+		$call_value = array( 100 , 50 , 30 , 25 , 25 , 20 , 15 , 15 , 10 , 10 ,   5 );
+		
+		$r = GRand::rand(1,100);
+		if ($fault_value[$level] >= $r ) {
+			$p = 3; // フォールト
+		} elseif ($call_value[$level] >= $r ) {
+			$p = 1; // コール
+		} else {
+			$p = 2; // レイズ
 		}
-		$p=2; //  強制的にレイズ
+//		$p=2; //  強制的にレイズ
 		return $p;
 	}
 	
@@ -143,19 +146,20 @@ class ComLogic extends CComponent {
 	}
 	
 	public function changeCards() {
-		$exceptions = $this->calcExceptions();		
+		$condition = $this->calcCondition();		
 		// その他の場合
-		return $this->changeCardsByRandom($exceptions);
+		return $this->changeCardsByRandom($condition);
 	}
 
 	
-	public function calcExceptions() {
+	public function calcCondition() {
 		$cards = $this->player->cards;
 		$hand = new PokerHand($cards);
 		$report = $hand->analyse();
 		
 		$exceptions = null;
-		
+		$force = false;
+				
 		if (count($report["flags"]) == 1 && $report["flags"]["one_pair"]) { // ワンペアしか役がない場合の戦略
 			$exceptions = array();
 			for($i=0;$i<5;$i++) {
@@ -223,6 +227,7 @@ class ComLogic extends CComponent {
 						array_push( $exceptions , $i );
 					}
 				}
+				$force = true;
 			} elseif (isset($aim_straight)) {
 				$exceptions = array();
 				$l = array();
@@ -243,6 +248,7 @@ class ComLogic extends CComponent {
 						}
 					}
 				}
+				$force = true;
 			} else {
 				if (GRand::rand(1,100)>50) { // 50パーセントの確率で、一番高いカード1毎を残す
 					$exceptions = array();
@@ -259,11 +265,18 @@ class ComLogic extends CComponent {
 		}
 		
 		
-		return $exceptions;
+		return array( "exceptions"=>$exceptions , "force" => $force);
 	}
 	
-	public function changeCardsByRandom( $exceptions = null) { // exceptionsで指定したカード以外をランダムで交換
+	public function changeCardsByRandom( $condition = null) { // exceptionsで指定したカード以外をランダムで交換
 		$rcount = 0;
+		
+		$exceptions = null;
+		$force = null;
+		if (isset($condition)) {
+			$exceptions = $condition["exceptions"];
+			$force      = $condition["force"];
+		}
 		
 		$cards = array();
 		$changeCount = 5;
@@ -275,8 +288,18 @@ class ComLogic extends CComponent {
 				array_push( $cards , $i );
 			}
 		}
-		
-		$n = GRand::rand(0,$changeCount); // 何枚交換するか
+		if ($force) {
+			$n = $changeCount;
+		} else {
+			if (GRand::rand(1,100)>50) { // 50パーセントの確率で、全部交換 
+				$n = $changeCount;
+			} elseif (Grand::rand(1,100)>50) { // さらに50パーセントの確率で、１枚残して交換
+				$n = $changeCount - 1;
+				if ($n<0) { $n = 0; }
+			} else { 
+				$n = GRand::rand(0,$changeCount); // 何枚交換するか
+			}
+		}
 		$res = array();
 		for ($i=0;$i<$n;$i++) {
 			$r = GRand::rand(0,$changeCount-1);  // どのカードを交換するか

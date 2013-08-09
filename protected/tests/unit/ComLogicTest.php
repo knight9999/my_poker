@@ -29,9 +29,9 @@ class ComLogicTest extends CTestCase {
 		$this->prepare();
 		$logic = new ComLogic( $this->charman, $this->com_player );
 
-		$exceptions = null;
-		GRand::ready( array( 5 , 0 , 1 , 2, 3, 4) );
-		$res = $logic->changeCardsByRandom( $exceptions );
+		$condition = null;
+		GRand::ready( array( 100 ,  0 , 1 , 2, 3, 4) );
+		$res = $logic->changeCardsByRandom( $condition );
 		
 		$this->assertEquals( 0 , $res[0] );
 		$this->assertEquals( 1 , $res[1] );
@@ -39,17 +39,17 @@ class ComLogicTest extends CTestCase {
 		$this->assertEquals( 3 , $res[3] );
 		$this->assertEquals( 4 , $res[4] );
 		
-		$exceptions = array( 1 );
-		Grand::ready( array( 3 , 0 , 1 , 2 ) );
-		$res = $logic->changeCardsByRandom( $exceptions );
+		$condition = array( "exceptions" => array( 1 ) , "force"=>false );
+		Grand::ready( array( 1 , 1 , 3 , 0 , 1 , 2 ) );
+		$res = $logic->changeCardsByRandom( $condition );
 		
 		$this->assertEquals( 0 , $res[0] );
 		$this->assertEquals( 2 , $res[1] );
 		$this->assertEquals( 3 , $res[2] );
 
-		$exceptions = array( 1 , 2 );
-		GRand::ready( array( 3 , 0 , 1 , 2 ) );
-		$res = $logic->changeCardsByRandom( $exceptions );
+		$condition = array( "exceptions" => array( 1 , 2 ) , "force"=>false );
+		GRand::ready( array( 100 , 0 , 1 , 2 ) );
+		$res = $logic->changeCardsByRandom( $condition );
 		
 		$this->assertEquals( 0 , $res[0] );
 		$this->assertEquals( 3 , $res[1] );
@@ -71,14 +71,14 @@ class ComLogicTest extends CTestCase {
 		$this->com_player->cards = $cards;
 		$logic = new ComLogic( $this->charman, $this->com_player );
 
-		GRand::ready( array(3 , 0 , 1, 2) );
+		GRand::ready( array(100 , 0 , 1, 2) );
 		$res = $logic->changeCards();
 		$this->assertEquals( 2 , $res[0] );
 		$this->assertEquals( 3 , $res[1] );
 		$this->assertEquals( 4 , $res[2] );
 		
 
-		GRand::ready( array(3 , 0 , 2, 2) );
+		GRand::ready( array(100 , 0 , 2, 2) );
 		$res = $logic->changeCards();
 		$this->assertEquals( 2 , $res[0] );
 		$this->assertEquals( 4 , $res[1] );
@@ -94,7 +94,7 @@ class ComLogicTest extends CTestCase {
 		$this->com_player->cards = $cards;
 		$logic = new ComLogic( $this->charman, $this->com_player );
 		
-		GRand::ready( array(1 , 0 ) );
+		GRand::ready( array(100 , 0 ) );
 		$res = $logic->changeCards();
 		$this->assertEquals( 4 , $res[0] );
 
@@ -109,7 +109,7 @@ class ComLogicTest extends CTestCase {
 		$this->com_player->cards = $cards;
 		$logic = new ComLogic( $this->charman, $this->com_player );
 		
-		GRand::ready( array(2 , 1, 0 ) );
+		GRand::ready( array(100 , 1, 0 ) );
 		$res = $logic->changeCards();
 		$this->assertEquals( 4 , $res[0] );
 		$this->assertEquals( 3 , $res[1] );
@@ -125,7 +125,7 @@ class ComLogicTest extends CTestCase {
 		$this->com_player->cards = $cards;
 		$logic = new ComLogic( $this->charman, $this->com_player );
 		
-		GRand::ready( array(1 , 0 ) );
+		GRand::ready( array(100 , 0 ) );
 		$res = $logic->changeCards();
 		$this->assertEquals( 3 , $res[0] );
 		
@@ -140,7 +140,7 @@ class ComLogicTest extends CTestCase {
 		$this->com_player->cards = $cards;
 		$logic = new ComLogic( $this->charman, $this->com_player );
 		
-		GRand::ready( array(1 , 0 ) );
+		GRand::ready( array(100 , 0 ) );
 		$res = $logic->changeCards();
 
 		$this->assertEquals( 3 , $res[0] );
@@ -156,7 +156,7 @@ class ComLogicTest extends CTestCase {
 		$this->com_player->cards = $cards;
 		$logic = new ComLogic( $this->charman, $this->com_player );
 		
-		GRand::ready( array(1 , 0 ) );
+		GRand::ready( array( 0 ) );
 		$res = $logic->changeCards();
 		
 		$this->assertEquals( 4 , $res[0] );
@@ -172,7 +172,7 @@ class ComLogicTest extends CTestCase {
 		$this->com_player->cards = $cards;
 		$logic = new ComLogic( $this->charman, $this->com_player );
 		
-		GRand::ready( array(1 , 0 ) );
+		GRand::ready( array( 0 ) );
 		$res = $logic->changeCards();
 		
 		$this->assertEquals( 0 , $res[0] );
@@ -189,7 +189,7 @@ class ComLogicTest extends CTestCase {
 		$this->com_player->cards = $cards;
 		$logic = new ComLogic( $this->charman, $this->com_player );
 		
-		GRand::ready( array(100 , 4 , 0 , 1 , 2 , 3 ) );
+		GRand::ready( array(100 ,  100 , 0 , 1 , 2 , 3 ) );
 		$res = $logic->changeCards();
 		
 		$this->assertEquals( 0 , $res[0] ); // 一番大きい10のカード以外を交換になるはず
@@ -199,6 +199,33 @@ class ComLogicTest extends CTestCase {
 		
 	}
 	
+	public function testDecidePlan2() {
+		$this->prepare();
+		
+		// ワンペアの場合のテスト
+		$cards = array(
+				new Card( array( 'mark' => 1 , 'number' => 3 ) ),
+				new Card( array( 'mark' => 2 , 'number' => 3 ) ),
+				new Card( array( 'mark' => 1 , 'number' => 5 ) ),
+				new Card( array( 'mark' => 3 , 'number' => 8 ) ),
+				new Card( array( 'mark' => 4 , 'number' => 9 ) )
+		);
+		$this->com_player->cards = $cards;
+		$logic = new ComLogic( $this->charman, $this->com_player );
+		
+		GRand::ready( array(3) );
+		$res = $logic->decidePlan2();
+		$this->assertEquals( 3 , $res );
+		
+		GRand::ready( array(10) );
+		$res = $logic->decidePlan2();
+		$this->assertEquals( 1 , $res );
+
+		GRand::ready( array(90) );
+		$res = $logic->decidePlan2();
+		$this->assertEquals( 2 , $res );
+		
+	}
 }
 
 ?>
