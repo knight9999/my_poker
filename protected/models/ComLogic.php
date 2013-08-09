@@ -143,27 +143,149 @@ class ComLogic extends CComponent {
 	}
 	
 	public function changeCards() {
-		$n = rand(0,5); // 何枚交換するか
-		$r = array();
-		for ($i=0;$i<$n;$i++) {
-			$num = rand(0,4);
-			if (!in_array( $num , $r) ) {
-				array_push( $r , $num );
-			}
-		}  
-		return $r;
+		$exceptions = $this->calcExceptions();		
+		// その他の場合
+		return $this->changeCardsByRandom($exceptions);
 	}
+
 	
-	public function changeCardsByRandom() {
-		$n = rand(0,5); // 何枚交換するか
-		$r = array();
-		for ($i=0;$i<$n;$i++) {
-			$num = rand(0,4);
-			if (!in_array( $num , $r) ) {
-				array_push( $r , $num );
+	public function calcExceptions() {
+		$cards = $this->player->cards;
+		$hand = new PokerHand($cards);
+		$report = $hand->analyse();
+		
+		$exceptions = null;
+		
+		if (count($report["flags"]) == 1 && $report["flags"]["one_pair"]) { // ワンペアしか役がない場合の戦略
+			$exceptions = array();
+			for($i=0;$i<5;$i++) {
+				if ( $cards[$i]->number == $report["info"]["one_pair_number"] ) {
+					array_push( $exceptions , $i );
+				}
+			}
+		} elseif ($report["flags"]["two_pairs"]) { // ツーペアの場合の戦略
+			$exceptions = array();
+			for($i=0;$i<5;$i++) {
+				if (in_array( $cards[$i]->number , $report["info"]["two_pairs_numbers"] ) ) {
+					array_push( $exceptions , $i );
+				}
+			}
+		} elseif (count($report["flags"]) == 1 && $report["flags"]["threecard"]) { // スリーカードのみの場合の戦略
+			$exceptions = array();
+			for($i=0;$i<5;$i++) {
+				if ( $cards[$i]->number == $report["info"]["threecard_number"] ) {
+					array_push( $exceptions , $i );
+				}
+			}
+		} elseif ($report["flags"]["fourcard"]) { // フォーカードの場合の戦略
+			$exceptions = array();
+			for($i=0;$i<5;$i++) {
+				if ( $cards[$i]->number == $report["info"]["fourcard_number"] ) {
+					array_push( $exceptions , $i );
+				}
+			}
+		} elseif ($report["flags"]["fullhouse"] || $report["flags"]["straight"] ||  // フルハウス、ストレート、フラッシュ、ロイヤルストレートフラッシュのときは交換しない。
+				$report["flags"]["royal_straight"] || $report["flags"]["flash"] ||
+				$report["flags"]["straight_flash"] || $report["flags"]["royal_straight_flash"]) {
+			$exceptions = array();
+			for($i=0;$i<5;$i++) {
+				array_push( $exceptions , $i );
 			}
 		}
-		return $r;
+		
+		if (!isset( $exceptions ) ) { // ハイカードの場合
+			$aim_flash = null;
+			$aim_straight = null;
+			
+			for ($k=1;$k<=4;$k++) {
+				if ($report["marks"][$k] == 4) { // 4枚マークがそろっている場合 => フラッシュ狙い
+					$aim_flash = array("mark" => $k);
+				}
+			}
+			
+			if ($report["continuous"][1] >= 4) { // あと一枚で（ロイヤル）ストレート => （ロイヤル）ストレート狙い	
+				$aim_straight = array("number" => 1);
+			} else {
+				for ($k=13-4;$k>=1;$k--) {
+					if ($report["continuous"][$k+4] >= 4) {// あと一枚でストレート => ストレート狙い	
+						$aim_straight = array("number"=>$k+4);
+					}
+				}
+			}
+			
+			
+			
+			
+			if (isset($aim_flash)) {
+				$exceptions = array();
+				for($i=0;$i<5;$i++) {
+					if ($cards[$i]->mark == $aim_flash["mark"]) {
+						array_push( $exceptions , $i );
+					}
+				}
+			} elseif (isset($aim_straight)) {
+				$exceptions = array();
+				$l = array();
+				
+				if ($aim_straight["number"] == 1) { // ロイヤルストレートの場合
+					$l = array( 10,11,12,13,1 );
+				} else {
+					for ($k=0;$k<5;$k++) {
+						array_push( $l , $aim_straight["number"] - $k);
+					}
+				}
+				for ($k=0;$k<5;$k++) {
+					$t = $l[$k];
+					for ($i=0;$i<5;$i++) {
+						if ($cards[$i]->number == $t) {
+							array_push( $exceptions , $i );
+							break;								
+						}
+					}
+				}
+			} else {
+				if (GRand::rand(1,100)>50) { // 50パーセントの確率で、一番高いカード1毎を残す
+					$exceptions = array();
+					$highest = 0;
+					for ($i=1;$i<5;$i++) {
+						if ($cards[$i]->number > $cards[$highest]->number) {
+							$highest = $i;
+						}
+					}
+					array_push( $exceptions , $highest );
+				}
+			}
+			
+		}
+		
+		
+		return $exceptions;
+	}
+	
+	public function changeCardsByRandom( $exceptions = null) { // exceptionsで指定したカード以外をランダムで交換
+		$rcount = 0;
+		
+		$cards = array();
+		$changeCount = 5;
+		if (isset($exceptions)) {
+			$changeCount = 5 - count( $exceptions );
+		}
+		for ($i=0;$i<5;$i++ ) {
+			if (! isset($exceptions) || ! in_array($i,$exceptions)) {
+				array_push( $cards , $i );
+			}
+		}
+		
+		$n = GRand::rand(0,$changeCount); // 何枚交換するか
+		$res = array();
+		for ($i=0;$i<$n;$i++) {
+			$r = GRand::rand(0,$changeCount-1);  // どのカードを交換するか
+			$num = $cards[$r];
+			if (!in_array( $num , $res) ) {
+				array_push( $res , $num );
+			}
+		}
+		return $res;
 	}
 	
 }

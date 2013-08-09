@@ -50,7 +50,7 @@ class PokerHand extends CComponent {
 		$this->calc();
 		return $this->name;
 	}
-	
+		
 	public function analyse($checkType = "combination",$report = null) {
 		if (!isset($report)) {
 			$report = new CMap();
@@ -72,6 +72,7 @@ class PokerHand extends CComponent {
 				$report["checked"] = new CMap();
 				$report["checked"]["basic"] = true;
 				$report["flags"] = new CMap();
+				$report["info"] = new CMap();
 				break;
 				
 			case "marks":
@@ -85,58 +86,80 @@ class PokerHand extends CComponent {
 				}
 				$report["checked"]["marks"] = true;
 				break;
-				
-			case "numbers":
+
+			case "pairs":
 				if (! $report["checked"]["basic"]) {
 					$this->analyse("basic",$report);
 				}
+
 				$numbers = $report["numbers"];
-				$marks   = $report["marks"];
-				
-				$last = 0;
-				$count = 0;
 				for ($i=1;$i<=13;$i++) {
-					if ($numbers[$i]>=1) {
-						if ($last == $i - 1 && $count>0 ) {
-							$count += 1;
-							if ($count>=5) {
-								$report["flags"]["straight"] = true;
-//								$flag_straight = true;
-							}
-						} else {
-							$count = 1;
-						}
-						$last = $i;
-					} else {
-						$count = 0;
-					}
-				
 					if ($numbers[$i] == 4) {
 						$report["flags"]["fourcard"] = true;
-//						$flag_fourcard = true;
+						$report["info"]["fourcard_number"] = $i;
 					}
 					if ($numbers[$i] == 3) {
 						$report["flags"]["threecard"] = true;
-//						$flag_threecard = true;
+						$report["info"]["threecard_number"] = $i;
 					}
 					if ($numbers[$i] == 2) {
 						if ($report["flags"]["one_pair"]) {
 							$report["flags"]["two_pairs"] = true;
-//							$flag_two_pair = true;
+							$report["info"]["two_pairs_numbers"] = array( $report["info"]["one_pair_number"] , $i );
+							unset( $report["info"]["one_pair_number"] );
 						} else {
 							$report["flags"]["one_pair"] = true;
-//							$flag_one_pair = true;
+							$report["info"]["one_pair_number"] = $i;
 						}
 					}
 				}
-				if ($last = 13 && $count == 4 && $numbers[1] >= 1) {
-					$report["flags"]["royal_straight"] = true;
-//					$flag_royal_straight = true;
-				}
-				$report["last"] = $last;
-				$report["numbers"] = $numbers; 
-				$report["marks"] = $marks;
 				
+				$report["checked"]["pairs"] = true;
+				break;
+			case "straight":
+				if (! $report["checked"]["basic"]) {
+					$this->analyse("basic",$report);
+				}
+
+				$numbers = $report["numbers"];
+				
+				$continuous = array();
+				for ($i=1;$i<=13 - 4;$i++) {
+					$match = 0;
+					for ($j=0;$j<5;$j++) {
+						if ($numbers[$i+$j] > 0) {
+							$match += 1;
+						}
+					}
+					$continuous[$i+4] = $match;
+					if ($match == 5) {
+						$report["flags"]["straight"] = true;
+						$report["last"] = $i + 4;
+					}
+				}
+				$match = 0;
+				if ($numbers[1]>0) {
+					$match += 1;
+				}
+				for ($i=10;$i<=13;$i++) {
+					if ($numbers[$i]>0) {
+						$match += 1;	
+					}
+				}
+				$continuous[1] = $match;
+				if ($match==5) {
+					$report["flags"]["royal_straight"] = true;
+				}
+				$report["continuous"] = $continuous;
+				$report["checked"]["straight"] = true;
+				break;
+			case "numbers":
+				if (! $report["checked"]["pairs"]) {
+					$this->analyse("pairs",$report);
+				}
+				if (! $report["checked"]["straight"]) {
+					$this->analyse("straight",$report);
+				}
 				$report["checked"]["numbers"] = true;
 				break;
 			case "combination":
@@ -162,84 +185,6 @@ class PokerHand extends CComponent {
 	}
 	
 	public function calc() {
-		
-		/*
-		$marks = new CMap();
-		$numbers = new CMap();
-		for ($i=1;$i<=4;$i++) {
-			$marks[$i] = 0;
-		}
-		for ($i=1;$i<=13;$i++) {
-			$numbers[$i] = 0;
-		}
-		foreach ($this->cards as $card) {
-			$marks[$card->mark] += 1;
-			$numbers[$card->number] += 1;
-		}
-
-		$flag_royal_straight_flash = false; 
-		$flag_straight_flash = false;
-		$flag_fourcard = false;
-		$flag_fullhouse = false;
-		$flag_flash = false;
-		$flag_royal_straight = false;
-		$flag_straight = false;
-		$flag_threecard = false;
-		$flag_two_pair = false;
-		$flag_one_pair = false;
-		
-		for ($i=1;$i<=4;$i++) {
-			if ($marks[$i] == 5) {
-				$flag_flash = true;
-			}
-		}
-
-		$last = 0;
-		$count = 0;
-		for ($i=1;$i<=13;$i++) {
-			if ($numbers[$i]>=1) {
-				if ($last == $i - 1 && $count>0 ) {
-					$count += 1;
-					if ($count>=5) {
-						$flag_straight = true;
-					}
-				} else {
-					$count = 1;
-				} 
-				$last = $i;
-			} else {
-				$count = 0;
-			}
-				
-			if ($numbers[$i] == 4) {
-				$flag_fourcard = true;
-			}
-			if ($numbers[$i] == 3) {
-				$flag_threecard = true;
-			}
-			if ($numbers[$i] == 2) {
-				if ($flag_one_pair) {
-					$flag_two_pair = true;
-				} else {
-					$flag_one_pair = true;
-				}
-			}
-		}
-		if ($last = 13 && $count == 4 && $numbers[1] >= 1) {
-			$flag_royal_straight = true;
-		}
-		
-		if ($flag_one_pair && $flag_threecard) {
-			$flag_fullhouse = true;
-		}
-		if ($flag_flash && $flag_straight) {
-			$flag_straight_flash = true;
-		}
-		if ($flag_flash && $flag_royal_straight) {
-			$flag_royal_straight_flash = true;
-		}
-		*/
-
 		$report = $this->analyse();
 		$numbers = $report["numbers"];
 			
