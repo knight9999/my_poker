@@ -1,3 +1,5 @@
-This project is under constructing.
+Let following two directiories be writable.
 
-now this.
+protected/runtime
+webroot/assets
+
