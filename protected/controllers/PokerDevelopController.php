@@ -22,7 +22,16 @@ class PokerDevelopController extends PokerController {
 					$engine->setCurrentView( $view );
 					$this->render('application.views.poker.play' , array( 'engine' => $engine ) );
 					break;
-			}
+				case "start":
+					$view = new CMap( array(
+							'message' => 'ポーカーゲーム',
+							'template' => 'application.views.poker._start',
+							'text' => 'よろしければ、OKを押してください'
+					));
+					$engine->setCurrentView(  $view );
+					$this->render('application.views.poker.play' , array( 'engine' => $engine ) );
+					break;
+			}	
 		} else {
 			$this->render( 'index' );
 		}
