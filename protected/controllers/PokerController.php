@@ -128,6 +128,7 @@ class PokerController extends Controller
 		$this->redirect( array( $this->id . '/err') );
 	}
 	
+	
 	// Uncomment the following methods and override them if needed
 	/*
 	public function filters()

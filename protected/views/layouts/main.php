@@ -24,16 +24,24 @@
 		</div>
 	</div><!-- header -->
 
-		<div id="mainmenu">
-		<?php $this->widget('zii.widgets.CMenu',array(
-			'id'=>"menu",
-			'items'=>array(
+<?php 
+
+$items = array(
 				array('label'=>'Home', 'url'=>array('/poker/index')),
 				array('label'=>'Play', 'url'=>array('/poker/menu')),
 				array('label'=>'HowTo', 'url'=>array('/poker/howto')),
 				array('label'=>'Settings', 'url'=>array('/poker/settings')),
-				array('label'=>'Technical Note', 'url'=>array('/poker/techNote') ),
-			),
+				array('label'=>'Technical Note', 'url'=>array('/poker/techNote') )
+);
+if (Yii::app()->params['develop']) {
+	array_push( $items , array('label' => 'Develop' , 'url'=>array('/pokerDevelop/index') ) );
+}
+	?>	
+	
+		<div id="mainmenu">
+		<?php $this->widget('zii.widgets.CMenu',array(
+			'id'=>"menu",
+			'items'=>$items,
 		)); ?>
 	</div><!-- mainmenu -->
 	<div class="clear"></div>
