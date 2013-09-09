@@ -1,8 +1,8 @@
 <h1>Home</h1>
 
-<p>クラシックなドローポーカーのゲームです。</p>
+<p><?php echo __trans("game.view.home.title")?></p>
 
 <div class="spc"></div>
 
-<p><a href="<?php echo $this->createUrl("poker/init"); ?>" >さっそくプレイする</a></p>
-<p><a href="<?php echo $this->createUrl("poker/howto"); ?>" >ゲームの説明を見る</a></p>
+<p><a href="<?php echo $this->createUrl("poker/init"); ?>" ><?php echo __trans("game.view.home.play_game"); ?></a></p>
+<p><a href="<?php echo $this->createUrl("poker/howto"); ?>" ><?php echo __trans("game.view.home.show_explanation"); ?></a></p>

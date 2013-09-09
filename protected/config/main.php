@@ -6,6 +6,10 @@
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 
+function __trans($message,$params=array()) {
+	return Yii::app()->translator->trans($message,$params);
+}
+
 function _joinpath($dir1, $dir2) {
 	return realpath($dir1 . '/' . $dir2);
 }
@@ -45,6 +49,9 @@ return array(
 	'components'=>array(
 		'settings' => array(
 			'class'=>'application.components.Settings'
+		),
+		'translator' => array( 
+			'class'=>'application.components.Translator'
 		),
 //		'user'=>array(
 //			// enable cookie-based authentication
@@ -104,6 +111,6 @@ return array(
 	),
 
 	'sourceLanguage'=>'00',
-	'language'=>'jp',
+	'language'=>'ja',
 		
 );
