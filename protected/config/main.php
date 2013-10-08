@@ -107,7 +107,7 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'fine14r3@gmail.com',
-		'develop' => 1,
+		'develop' => 0,
 	),
 
 	'sourceLanguage'=>'00',
