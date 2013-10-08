@@ -11,9 +11,9 @@
 <?php   endif; ?>
 
 <?php if ($engine->currentView["flag_win"]): ?>
-<img src="/images/s_cracker.png"><p class="large">You Win!</p>
+<img src="<?php echo Yii::app()->baseUrl . "/images/s_cracker.png" ?>"><p class="large">You Win!</p>
 <?php else: ?>
-<img src="/images/s_cemetery.png"><p class="large">You Loose!</p>
+<img src="<?php echo Yii::app()->baseUrl . "/images/s_cemetery.png" ?>"><p class="large">You Loose!</p>
 <?php endif; ?>
 <?php   if (isset($engine->currentView["buttons"])): ?>
 <?php   foreach ( $engine->currentView["buttons"] as $button ): ?>

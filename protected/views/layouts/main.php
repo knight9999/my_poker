@@ -20,7 +20,7 @@
 <div class="container" id="page">
 	<div id="header">
 		<div id="logo">
-		<img src="/images/poker_logo_s.png">
+		<img src="<?php echo Yii::app()->baseUrl . "/images/poker_logo_s.png" ?>">
 		</div>
 	</div><!-- header -->
 

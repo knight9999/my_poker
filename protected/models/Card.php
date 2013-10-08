@@ -34,11 +34,11 @@ class Card extends CComponent {
 					break;
 			}
 		}
-		return "/images/cards/card".$this->mark."_".$str.".png";
+		return Yii::app()->baseUrl . "/images/cards/card".$this->mark."_".$str.".png";
 	}
 	
 	public function bg_image() {
-		return "/images/cards/card_bg.png";
+		return Yii::app()->baseUrl . "/images/cards/card_bg.png";
 	}
 	
 	/*
