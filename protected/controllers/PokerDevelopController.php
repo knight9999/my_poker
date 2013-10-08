@@ -15,6 +15,21 @@ class PokerDevelopController extends PokerController {
 							'message' => 'ゲームオーバー',
 							'text' => '勝敗がつきました。' . $text,
 							'template' => 'application.views.poker._gameover',
+							'flag_win' => true,
+							'buttons' => array(
+									array( '最初からゲームをやる' , 's1' )
+							)
+					));
+					$engine->setCurrentView( $view );
+					$this->render('application.views.poker.play' , array( 'engine' => $engine ) );
+					break;
+				case "gameover2":
+					$text = "優勝者は" . "○○○" . "です。";
+					$view = new CMap( array(
+							'message' => 'ゲームオーバー',
+							'text' => '勝敗がつきました。' . $text,
+							'template' => 'application.views.poker._gameover',
+							'flag_win' => false,
 							'buttons' => array(
 									array( '最初からゲームをやる' , 's1' )
 							)

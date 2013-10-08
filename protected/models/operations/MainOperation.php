@@ -225,7 +225,9 @@ class MainOperation extends BaseGameOperation {
 		$text = "優勝者は" . $winner->name . "です。";
 		$view = new CMap( array(
 				'message' => 'ゲームオーバー',
+				'template' => '_gameover',
 				'text' => '勝敗がつきました。' . $text,
+				'flag_win' => $winner->isPerson(),
 				'buttons' => array(
 						array( '最初からゲームをやる' , 's1' )
 				)

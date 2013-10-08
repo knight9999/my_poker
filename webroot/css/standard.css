@@ -90,3 +90,7 @@ p {
 .warningbox ul {
     margin-bottom: 0px;
 }
+
+.large {
+	font-size: 36px;
+}
